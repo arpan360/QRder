@@ -24,7 +24,7 @@ body {
   color: #e74c3c;
   margin: 10px;
   text-align: center;
-  margin-left:30%;
+  
   
 }
 
@@ -126,7 +126,7 @@ body {
   border:rgb(241, 236, 235);
   border-radius: 100%;
   cursor: pointer;
-  font-size: 80%;
+  font-size: 60%;
 }
 
 .remove-btn {
