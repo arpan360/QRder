@@ -7,7 +7,7 @@ const CartIcon = ({ itemCount, onClick, isAnimating }) => {
     <div className="cart-icon-wrapper" onClick={onClick}>
       <div className={`cart-icon ${isAnimating ? 'bounce' : ''}`}>
         <svg 
-          xmlns="http://www.w3.org/2000/svg" 
+          xmlns="" 
           width="24" 
           height="24" 
           viewBox="0 0 24 24" 
