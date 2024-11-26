@@ -27,12 +27,16 @@ const MenuPage = () => {
   }, [menuItems]);
 
   const filteredItems = useMemo(() => {
-    return menuItems.filter(item => {
+    console.log('Search Query:', searchQuery);
+    const filtered = menuItems.filter(item => {
       const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           item.description.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesCategory = selectedCategory === "All" || item.category === selectedCategory;
+      console.log(`Item: ${item.name}, Matches Search: ${matchesSearch}, Matches Category: ${matchesCategory}`);
       return matchesSearch && matchesCategory;
     });
+    console.log('Filtered Items:', filtered);
+    return filtered;
   }, [menuItems, searchQuery, selectedCategory]);
 
   const addToCart = (item) => {
@@ -73,7 +77,15 @@ const MenuPage = () => {
             type="text"
             placeholder="Search menu..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              console.log('Search Input:', e.target.value);
+              setSearchQuery(e.target.value);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+              }
+            }}
           />
         </div>
         <div className="category-filter">
