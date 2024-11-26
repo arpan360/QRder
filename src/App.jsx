@@ -1,10 +1,13 @@
 import React from 'react';
 import { Toaster } from 'react-hot-toast';
 import MenuPage from "./assets/components/MenuPage";
+import Header from "./assets/components/Header";
+import Footer from "./assets/components/Footer";
+import "./App.css";
 
 const App = () => {
   return (
-    <div>
+    <div className="app-container">
       <Toaster 
         position="top-right"
         toastOptions={{
@@ -27,13 +30,13 @@ const App = () => {
           },
         }}
       />
-      <MenuPage />
+      <Header />
+      <main className="main-content">
+        <MenuPage />
+      </main>
+      <Footer />
     </div>
   );
 };
 
 export default App;
-
-
-
-

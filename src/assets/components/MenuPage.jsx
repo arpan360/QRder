@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { toast } from "react-hot-toast";
 import CartIcon from "./CartIcon";
 import "./MenuPage.css";
@@ -18,6 +18,22 @@ const MenuPage = () => {
   const [menuItems] = useState(initialMenuItems);
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+
+  const categories = useMemo(() => {
+    const cats = ["All", ...new Set(menuItems.map(item => item.category))];
+    return cats.sort();
+  }, [menuItems]);
+
+  const filteredItems = useMemo(() => {
+    return menuItems.filter(item => {
+      const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          item.description.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCategory = selectedCategory === "All" || item.category === selectedCategory;
+      return matchesSearch && matchesCategory;
+    });
+  }, [menuItems, searchQuery, selectedCategory]);
 
   const addToCart = (item) => {
     setCart((prevCart) => {
@@ -31,7 +47,7 @@ const MenuPage = () => {
       }
       return [...prevCart, { ...item, quantity: 1 }];
     });
-     toast.success(`Added ${item.name} to cart`);
+    toast.success(`Added ${item.name} to cart`);
   };
 
   const updateQuantity = (itemId, change) => {
@@ -40,7 +56,7 @@ const MenuPage = () => {
         .map((item) =>
           item.id === itemId ? { ...item, quantity: item.quantity + change } : item
         )
-        .filter((item) => item.quantity > 0) // Remove item if quantity is zero
+        .filter((item) => item.quantity > 0)
     );
   };
 
@@ -49,10 +65,44 @@ const MenuPage = () => {
 
   return (
     <div className="menu-page">
-      {/* Cart Icon */}
       <CartIcon itemCount={cartItemsCount} onClick={() => setIsCartOpen(true)} />
 
-      {/* Cart Sidebar */}
+      <div className="menu-controls">
+        <div className="search-bar">
+          <input
+            type="text"
+            placeholder="Search menu..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+        <div className="category-filter">
+          {categories.map(category => (
+            <button
+              key={category}
+              className={`category-btn ${selectedCategory === category ? 'active' : ''}`}
+              onClick={() => setSelectedCategory(category)}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="menu-grid">
+        {filteredItems.map((item) => (
+          <div key={item.id} className="menu-item">
+            <img src={item.img} alt={item.name} />
+            <div className="item-details">
+              <h3>{item.name}</h3>
+              <p className="description">{item.description}</p>
+              <p className="price">Rs {item.price}</p>
+              <button onClick={() => addToCart(item)}>Add to Cart</button>
+            </div>
+          </div>
+        ))}
+      </div>
+
       {isCartOpen && (
         <div className="cart-sidebar open">
           <div className="sidebar-header">
@@ -97,21 +147,6 @@ const MenuPage = () => {
           </div>
         </div>
       )}
-
-      {/* Menu Items */}
-      <h1 className="menu-title">Food Items</h1>
-      <div className="menu-container">
-        {menuItems.map((item) => (
-          <div key={item.id} className="menu-item">
-            <img src={item.img} alt={item.name} className="menu-item-image" />
-            <h3>{item.name}</h3>
-            <p>Price: Rs {item.price}</p>
-            <button className="add-btn" onClick={() => addToCart(item)}>
-              Add to Cart
-            </button>
-          </div>
-        ))}
-      </div>
     </div>
   );
 };
